@@ -1,14 +1,14 @@
 <p>
-  heroes works by component's property directory: {{hero}}
+    heroes works by component's property directory: {{hero}}
 </p>
 <p>
-	get hero by component's function: {{getHero()}}
+    get hero by component's function: {{getHero()}}
 </p>
 
 <p>
-	{{hero3.name | uppercase }} Details =>
-	id = {{getHero3().id}} ;
-	name = {{getHero3().name}} ;
+    {{hero3.name | uppercase }} Details =>
+    id = {{getHero3().id}} ;
+    name = {{getHero3().name}} ;
 </p>
 
 <!--  
@@ -17,9 +17,9 @@
 		2.input text's value
  -->
 <div>
-	<label>name using Two-way binding :  
-		<input [(ngModel)]="hero3.name" placeholder="name"/>
-	</label>
+    <label>name using Two-way binding :
+        <input [(ngModel)]="hero3.name" placeholder="name" />
+    </label>
 </div>
 
 
@@ -28,13 +28,13 @@
  -->
 <h2>My Heroes</h2>
 <ul class="heroes">
-<!--
+    <!--
 	 The *ngFor is Angular's repeater directive;
 	 Angular's event binding syntax;
  -->
-  <li *ngFor="let hero of heroes" (click)="onSelect(hero)">
-    <span class="badge">{{hero.id}}</span> {{hero.name}}
-  </li>
+    <li *ngFor="let hero of heroes" (click)="onSelect(hero)">
+        <span class="badge">{{hero.id}}</span> {{hero.name}}
+    </li>
 </ul>
 
 <!--
@@ -42,13 +42,13 @@
  onSelect pass the hero from ui to component
  -->
 <div *ngIf="selectedHero">
-<h2>{{selectedHero.name | uppercase}} Details in a same view with Lists of component HeroesComponent </h2>	
-<div><span>id: </span>{{selectedHero.id}}</div>
-<div>
-  <label>name:
-    <input [(ngModel)]="selectedHero.name" placeholder="name"/>
-  </label>
-</div>
+    <h2>{{selectedHero.name | uppercase}} Details in a same view with Lists of component HeroesComponent </h2>
+    <div><span>id: </span>{{selectedHero.id}}</div>
+    <div>
+        <label>name:
+            <input [(ngModel)]="selectedHero.name" placeholder="name" />
+        </label>
+    </div>
 </div>
 
 <!-- 
@@ -56,26 +56,24 @@
 	to do assigment from selected hero to its hero property in component HeroDetailComponent. 
 	at component of HeroesComponent using selectedHero directly.
  -->
+
 <app-hero-detail [hero]="selectedHero"></app-hero-detail>
 
 
 <h2>My Heroes</h2>
 <ul class="heroes">
-  <li *ngFor="let hero of heroes4" (click)="onSelect2(hero)">
-    <span class="badge">{{hero.id}}</span> {{hero.name}}
-  </li>
+    <li *ngFor="let hero of heroes4" (click)="onSelect2(hero)">
+        <a routerLink="/detail/{{hero.id}}"></a>
+        <span class="badge">{{hero.id}}</span> {{hero.name}}
+    </li>
 </ul>
 
 <div *ngIf="selectedHero2">
-<h2>{{selectedHero2.name | uppercase}} Details from data service </h2>	
-<div><span>id: </span>{{selectedHero2.id}}</div>
-<div>
-  <label>name:
-    <input [(ngModel)]="selectedHero2.name" placeholder="name"/>
-  </label>
+    <h2>{{selectedHero2.name | uppercase}} Details from data service </h2>
+    <div><span>id: </span>{{selectedHero2.id}}</div>
+    <div>
+        <label>name:
+            <input [(ngModel)]="selectedHero2.name" placeholder="name" />
+        </label>
+    </div>
 </div>
-</div>
-
-
-
-
