@@ -1,3 +1,6 @@
+<p>
+    hero details component works!
+</p>
 <!-- why put it into a signle component ? => simple like OO in java.
 	1. reducing HeroesComponent's responsibilities.
 	2. can evolve the HeroDetailComponent into a rich hero editor without touching the list HeroesComponent.
@@ -6,11 +9,13 @@
  -->
 
 <div *ngIf="hero">
-  <h2>{{hero.name | uppercase}} Details in separated component of HeroDetailComponent </h2>
+  <h2>{{hero.name | uppercase}} Details in a sperate view of HeroDetailComponent </h2>
   <div><span>id: </span>{{hero.id}}</div>
   <div>
     <label>name:
       <input [(ngModel)]="hero.name" placeholder="name"/>
     </label>
   </div>
+  <button (click)="goBack()">go back</button>
 </div>
+

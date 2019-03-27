@@ -4,7 +4,28 @@
 		To display the HeroesComponent, 
 		must add component's CSS element selector£¨app-heroes£©
 		to the template of the shell AppComponent
-	 -->
-	<app-heroes></app-heroes>
-	
+     -->
+
+
+    <!-- 
+        Using router to replace shown directly.
+    <app-heroes></app-heroes>
+     -->
+
+    <!--
+        Add a <nav> element and, within that, an anchor element that, 
+        when clicked, triggers navigation to the HeroesComponent. 
+        the routerLink's value must be in Routes of AppRoutingModule.
+    -->
+    <nav>
+        <li><a routerLink="/dashboard">Dashboard</a></li>
+         <li><a routerLink="/heroes">Heroes</a></li>    
+    </nav>
+
+    <!--
+        AppModule imports AppRoutingModule which exported RouterModule,
+        so that the RouterOutlet avaliable. 
+    -->
+
+	<router-outlet></router-outlet>
 	<app-messages></app-messages>
