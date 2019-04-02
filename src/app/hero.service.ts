@@ -1,60 +1,114 @@
 import { Injectable } from '@angular/core';
-/**
- * there are 3 way to get data from remote server have an asynchronous signature :
- * 1.take a callback. 
- * 2.return a Promise.
- * 3.return an Observable.  => currently using 3rd way to get asynchronous signature. 
- */
 import { Observable, of } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { catchError, map, tap } from 'rxjs/operators';
+
 import { Hero } from './hero';
 import { HEROES } from './mock-heroes';
-
-//This is a typical "service-in-service" scenario: 
 import { MessageService } from './message.service';
 
-/**
- * @Injectable() decorator make the class as dependency injection. Other component with @Component() decorator.
- * 
- * the HeroService is registered as the provider of this service.
- * 
-*/
-@Injectable({
-    /**
-        provide the service at the root level, 
-        it means creates a single, 
-        shared instance of HeroService and injects into any class
-    */
-    providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class HeroService {
-    /**
-     * the constructor with a parameter that declares a private messageService property. 
-     * Angular will inject the singleton MessageService into that property when it creates the HeroService.
-     */
-    constructor(private messageService: MessageService) { }
+    private heroesUrl = 'api/heroes';  // URL to web api
 
-    // return hero array with Hero[] like as local server get data immediately.
-    getHeroes(): Hero[] {
-        return HEROES;
-    }
+    constructor(private httpClient: HttpClient, private messageService: MessageService) { }
 
-    // return heros like as remote server to make sure wait for the Observable to emit the array of heroes
-    getHeroes2(): Observable<Hero[]> {
-        return of(HEROES);  //of(HEROES) returns an Observable<Hero[]> the array of mock heroes.
-    }
-
-    getHeroes3(): Observable<Hero[]> {
-        // send the message after fetching the heroes
+    //get heros from mock heros by RxJS of()
+    getHeroes(): Observable<Hero[]> {
         this.messageService.add('HeroService: fetched heroes');
         return of(HEROES);
     }
 
-    getHero(id: number): Observable<Hero> {
-        // send the message _after_ fetching the hero
-        this.messageService.add(`HeroService: fetched hero id=${id}`);
-        return of(HEROES.find(hero => hero.id === id)); // the heros with array have the id 
+    //GET heroes from the server by http
+    getHeroes2(): Observable<Hero[]> {
+        this.log("HeroService: fetched hero");
+        return this.httpClient.get<Hero[]>(this.heroesUrl).pipe(
+            catchError(
+                this.handleError<Hero[]>('getHeroes', [])
+            )
+        );
     }
+
+    private handleError<T>(operation = 'operation', result?: T) {
+        return (error: any): Observable<T> => {
+            //send the error to remote logging infrastructure
+            console.error(error); // log to console instead
+
+            //better job of transforming error for user consumption
+            this.log(`${operation} failed: ${error.message}`);
+
+            //Let the app keep running by returning an empty result.
+            return of(result as T);
+        };
+    }
+
+    getHero(id: number): Observable<Hero> {
+        this.messageService.add(`HeroService: fetched hero id=${id}`);
+        return of(HEROES.find(hero => hero.id === id));
+    }
+
+    /** GET hero by id. Will 404 if id not found */
+    getHero2(id: number): Observable<Hero> {
+        this.log("get hero by id from backend");
+        const url = `${this.heroesUrl}/${id}`;
+        return this.httpClient.get<Hero>(url).pipe(
+            tap(_ => this.log(`fetched hero id=${id}`)),
+            catchError(this.handleError<Hero>(`getHero id=${id}`))
+        );
+    }
+
+    /** PUT: update the hero on the server */
+    updateHero(hero: Hero): Observable<any> {
+        const httpOptions = {
+            headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+        };
+        return this.httpClient.put(this.heroesUrl, hero, httpOptions).pipe(
+            tap(_ => this.log(`updated hero id=${hero.id}`)),
+            catchError(this.handleError<any>('updateHero'))
+        );
+    }
+
+
+    /** POST: add a new hero to the server */
+    addHero(hero: Hero): Observable<Hero> {
+        const httpOptions = {
+            headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+        };
+        return this.httpClient.post<Hero>(this.heroesUrl, hero, httpOptions).pipe(
+            tap((newHero: Hero) => this.log(`added hero w/ id=${newHero.id}`)),
+            catchError(this.handleError<Hero>('addHero'))
+        );
+    }
+
+    /** DELETE: delete the hero from the server */
+    deleteHero(hero: Hero | number): Observable<Hero> {
+        const id = typeof hero === 'number' ? hero : hero.id;
+        const url = `${this.heroesUrl}/${id}`;
+        const httpOptions = {
+            headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+        };
+        return this.httpClient.delete<Hero>(url, httpOptions).pipe(
+            tap(_ => this.log(`deleted hero id=${id}`)),
+            catchError(this.handleError<Hero>('deleteHero'))
+        );
+    }
+
+    /* GET heroes whose name contains search term */
+    searchHeroes(term: string): Observable<Hero[]> {
+        if (!term.trim()) {
+            // if not search term, return empty hero array.
+            return of([]);
+        }
+        return this.httpClient.get<Hero[]>(`${this.heroesUrl}/?name=${term}`).pipe(
+            tap(_ => this.log(`found heroes matching "${term}"`)),
+            catchError(this.handleError<Hero[]>('searchHeroes', []))
+        );
+    }
+
+    private log(message: string) {
+        this.messageService.add(`HeroService: ${message}`);
+    }
+
+
+
 }
-
-
-

@@ -1,0 +1,20 @@
+<p>
+    hero-search works!
+</p>
+<div id="search-component">
+    <h4>Hero Search</h4>
+    <!-- The search() method is called via an event binding to the textbox's input event. 
+        the user types in the textbox, the binding calls search() with the textbox value, a "search term". 
+    -->
+    <input #searchBox id="search-box" (input)="search(searchBox.value)" />
+    <ul class="search-result">
+        <!-- The $ is a convention that indicates heroes$ is an Observable, not an array. 
+              a async pipe character (|) , which oper Observable like array
+        -->
+        <li *ngFor="let hero of heroes$ | async">
+            <a routerLink="/detail/{{hero.id}}">
+                {{hero.name}}
+            </a>
+        </li>
+    </ul>
+</div>

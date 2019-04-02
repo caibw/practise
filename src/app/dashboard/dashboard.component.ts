@@ -1,6 +1,3 @@
-/**
- * This class very similar to the HeroesComponent class.
- */
 import { Component, OnInit } from '@angular/core';
 import { Hero } from '../hero';
 import { HeroService } from '../hero.service';
@@ -11,16 +8,18 @@ import { HeroService } from '../hero.service';
     styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
-    heroes: Hero[] = [];    //It defines a heroes array property.
+    heroes: Hero[] = [];   
 
-    constructor(private heroService: HeroService) { }   //The constructor expects Angular to inject the HeroService into a private heroService property.
+    constructor(private heroService: HeroService) { }
 
     ngOnInit() {
-        this.getHeroes();   //The ngOnInit() lifecycle hook calls getHeroes.
+        this.getHeroes();
     }
-
+    
     getHeroes(): void {
+        //this.heroService.getHeroes().subscribe(heroes => this.heroes = heroes.slice(0, heroes.length));
         this.heroService.getHeroes2().subscribe(heroes => this.heroes = heroes.slice(0, heroes.length));
     }
-}
+    
+}   
 
